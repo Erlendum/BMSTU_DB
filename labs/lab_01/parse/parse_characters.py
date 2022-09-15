@@ -60,23 +60,23 @@ def append_one_elem(quest, id, names, sexes, ages, occupations, lives, species, 
     for j in range(len(soup_list) - 1):
         soup_list[j + 1] = soup_list[j + 1].replace(',', '')
         soup_list[j + 1] = soup_list[j + 1].replace(';', '')
-        if soup_list[j] == 'Пол':
+        if soup_list[j] == 'Пол' and not sex_flag:
             sex_flag = True
             sexes.append(soup_list[j + 1])
-        elif soup_list[j] == 'Род занятий':
+        elif soup_list[j] == 'Род занятий' and not occupation_flag:
             occupation_flag = True
             occupations.append(soup_list[j + 1])
-        elif soup_list[j] == 'Смерть':
+        elif soup_list[j] == 'Смерть' and not live_flag:
             live_flag = True
             lives.append(False)
-        elif soup_list[j] == 'Раса':
+        elif soup_list[j] == 'Раса' and not species_flag:
             species_flag = True
             specie = get_species_id_by_name(soup_list[j + 1][:4])
             if specie is None:
                 species_flag = False
                 continue
             species.append(specie)
-        elif soup_list[j] == 'Народность':
+        elif soup_list[j] == 'Народность' and not country_flag:
             country_flag = True
             country = get_country_id_by_name(soup_list[j+1][:4])
             if country is None:

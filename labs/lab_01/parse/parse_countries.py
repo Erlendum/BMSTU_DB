@@ -1,3 +1,4 @@
+import csv
 import time
 
 import requests
@@ -5,7 +6,18 @@ import numpy as np
 from bs4 import BeautifulSoup
 
 
-def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polities, leaders):
+def get_religion_id_by_name(name):
+    results = []
+    with open('religions.csv') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            results.append(row)
+
+    for el in results:
+        if name in el['religion_name']:
+            return el['religion_id']
+
+def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polities, leaders, languages, religions):
     url = src + quest['href']
 
     response = ''
@@ -24,20 +36,22 @@ def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polit
 
     soup_list = soup.text.split('\n')
 
-    ids.append(id)
+
 
     soup_list[3] = soup_list[3].replace(',', '')
     name = soup_list[3][:soup_list[3].find('|') - 1]
-    if name in names:
-        name += ' {:d}'.format(names.count(name) + 1)
+
+    if 'Участник' in name or 'Категория' in name:
+        return None
+    ids.append(id)
     names.append(name)
 
-    capital_flag, status_flag, currency_flag, polity_flag, leader_flag = False, False, False, False, False
+    capital_flag, status_flag, currency_flag, polity_flag, leader_flag, religion_flag, language_flag = False, False, False, False, False, False, False
     for j in range(len(soup_list) - 1):
         soup_list[j + 1] = soup_list[j + 1].replace(',', '')
         soup_list[j + 1] = soup_list[j + 1].replace(';', '')
         if soup_list[j] == 'Столица':
-            type_flag = True
+            capital_flag = True
             capitals.append(soup_list[j + 1])
         elif soup_list[j] == 'Статус':
             status_flag = True
@@ -51,6 +65,12 @@ def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polit
         elif soup_list[j] == 'Правитель':
             leader_flag = True
             leaders.append(soup_list[j + 1])
+        elif soup_list[j] == 'Религия':
+            religion_flag = True
+            religions.append(get_religion_id_by_name(soup_list[j + 1][:8]))
+        elif soup_list[j] == 'Официальный язык':
+            language_flag = True
+            languages.append(soup_list[j + 1])
 
     if not capital_flag:
         capitals.append('')
@@ -62,6 +82,12 @@ def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polit
         leaders.append('')
     if not polity_flag:
         polities.append('')
+    if not religion_flag:
+        religions.append('')
+    if not language_flag:
+        languages.append('')
+
+    return True
 
 
 src = 'https://vedmak.fandom.com'
@@ -82,11 +108,14 @@ statuses = ['country_status']
 currencies = ['country_currency']
 polities = ['country_polity']
 leaders = ['country_leaders']
+languages = ['country_language']
+religions = ['religion_id']
 
 id = 1
 for quest in quests_list:
-    append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polities, leaders)
+    if append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polities, leaders, languages, religions) is None:
+        id -= 1
     print(str(id) + '/' + str(len(quests_list)) + '\r', end='')
     id += 1
 
-np.savetxt('countries.csv', [p for p in zip(ids, names, capitals, statuses, currencies, polities, leaders)], delimiter=',', fmt='%s')
+np.savetxt('countries.csv', [p for p in zip(ids, names, capitals, statuses, currencies, polities, leaders, languages, religions)], delimiter=',', fmt='%s')
