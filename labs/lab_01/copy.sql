@@ -1,1 +1,0 @@
-copy witcher.Quests FROM '/home/erlendum/Документы/BMSTU/BMSTU_DB/labs/data/quests.csv' DELIMITER ',' CSV HEADER;

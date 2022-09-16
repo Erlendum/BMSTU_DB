@@ -3,8 +3,8 @@ version: "3.9"
 services:
   postgres:
     container_name: postgres_db
-    image: postgres
     restart: always
+    build: ./
     environment:
       POSTGRES_DB: "Witcher"
       POSTGRES_USER: "erlendum"
@@ -12,4 +12,4 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+        - ./data:/data
