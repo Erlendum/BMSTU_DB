@@ -6,6 +6,8 @@ import requests
 import numpy as np
 from bs4 import BeautifulSoup
 
+src = 'https://vedmak.fandom.com'
+
 dictionary = {'Предательство': ['Комикс', 1230],
               'Ведьмак:Проклятиеворонов': ['Книга', 1230],
               'ВладычицаОзера': ['Книга', 1260],
@@ -90,7 +92,7 @@ def truncate_by_quotes(s):
     return s
 
 
-def append_one_elem(quest, id, ids, years, types, names, locations):
+def append_one_elem(quest, id, ids, years, types, names, locations, replicas_numbers):
     url = src + quest['href']
 
     response = ''
@@ -138,7 +140,7 @@ def append_one_elem(quest, id, ids, years, types, names, locations):
                 location_flag = False
                 continue
             locations.append(location)
-
+    replicas_numbers.append(random.randint(0, 300))
     if not appearance_flag:
         names.append('')
         types.append('')
@@ -149,121 +151,48 @@ def append_one_elem(quest, id, ids, years, types, names, locations):
     return True
 
 
-src = 'https://vedmak.fandom.com'
-url1 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8"
-response1 = requests.get(url1)
-soup1 = BeautifulSoup(response1.text, 'lxml')
-
-url2 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%91%D0%B0%D1%80%D1%82"
-response2 = requests.get(url2)
-soup2 = BeautifulSoup(response2.text, 'lxml')
-
-url3 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%92%D0%B8%D0%BB%D1%8C%D0%B1%D1%83%D1%80+%D0%B0%D1%8D%D0%BF+%D0%9C%D0%B8%D0%BB%D0%BB%D0%B8%D1%81+%D0%AD%D0%BF%D1%81%D0%B8%D0%B2%D0%B0%D1%80"
-response3 = requests.get(url3)
-soup3 = BeautifulSoup(response3.text, 'lxml')
-
-url4 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%93%D1%80%D0%B5%D1%82%D0%B0+%D0%9E%D0%B1%D0%B5%D1%80%D1%82"
-response4 = requests.get(url4)
-soup4 = BeautifulSoup(response4.text, 'lxml')
-
-url5 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%97%D0%B5%D0%BB%D0%B8"
-response5 = requests.get(url5)
-soup5 = BeautifulSoup(response5.text, 'lxml')
-
-url6 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%9A%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%BD"
-response6 = requests.get(url6)
-soup6 = BeautifulSoup(response6.text, 'lxml')
-
-url7 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%9B%D1%8E%D1%81%D1%8C%D0%B5%D0%BD+%D0%9C%D0%BE%D0%BD%D0%BD%D0%B0%D1%80"
-response7 = requests.get(url7)
-soup7 = BeautifulSoup(response7.text, 'lxml')
-
-url8 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%9D%D0%B0%D1%80%D0%B0%D0%B4%D0%BA%D0%BE%D0%B2%D0%B0"
-response8 = requests.get(url8)
-soup8 = BeautifulSoup(response8.text, 'lxml')
-
-url9 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%9F%D1%80%D0%B8%D0%B7%D1%80%D0%B0%D0%BA+%D0%B8%D0%B3%D1%80%D0%BE%D0%BA%D0%B0"
-response9 = requests.get(url9)
-soup9 = BeautifulSoup(response9.text, 'lxml')
-
-url10 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%A1%D0%B8%D0%BD%D0%B3%D0%B0"
-response10 = requests.get(url10)
-soup10 = BeautifulSoup(response10.text, 'lxml')
-
-url11 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%A4%D0%B5%D0%B4%D0%BE%D1%80%D0%B0+%D0%9A%D1%80%D0%B0%D0%BD%D0%BD"
-response11 = requests.get(url11)
-soup11 = BeautifulSoup(response11.text, 'lxml')
-
-url12 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B8?from=%D0%AD%D0%B3%D0%BE%D0%BD"
-response12 = requests.get(url12)
-soup12 = BeautifulSoup(response12.text, 'lxml')
-
-# print(soup)
-# print(soup.text.split('\n'))
-
-quests1 = soup1.find_all('a', class_='category-page__member-link', href=True)
-quests2 = soup2.find_all('a', class_='category-page__member-link', href=True)
-quests3 = soup3.find_all('a', class_='category-page__member-link', href=True)
-quests4 = soup4.find_all('a', class_='category-page__member-link', href=True)
-quests5 = soup5.find_all('a', class_='category-page__member-link', href=True)
-quests6 = soup6.find_all('a', class_='category-page__member-link', href=True)
-quests7 = soup7.find_all('a', class_='category-page__member-link', href=True)
-quests8 = soup8.find_all('a', class_='category-page__member-link', href=True)
-quests9 = soup9.find_all('a', class_='category-page__member-link', href=True)
-quests10 = soup10.find_all('a', class_='category-page__member-link', href=True)
-quests11 = soup11.find_all('a', class_='category-page__member-link', href=True)
-quests12 = soup12.find_all('a', class_='category-page__member-link', href=True)
-
 quests_list = []
-for quest in quests1:
-    quests_list.append(quest)
+with open('characters_links.txt') as f:
+    quest_links = f.readlines()
 
-for quest in quests2:
-    quests_list.append(quest)
+for i in range(len(quest_links)):
+    quest_links[i] = quest_links[i][:-1]
 
-for quest in quests3:
-    quests_list.append(quest)
-
-for quest in quests4:
-    quests_list.append(quest)
-
-for quest in quests5:
-    quests_list.append(quest)
-
-for quest in quests6:
-    quests_list.append(quest)
-
-for quest in quests7:
-    quests_list.append(quest)
-
-for quest in quests8:
-    quests_list.append(quest)
-
-for quest in quests9:
-    quests_list.append(quest)
-
-for quest in quests10:
-    quests_list.append(quest)
-
-for quest in quests11:
-    quests_list.append(quest)
-
-for quest in quests12:
-    quests_list.append(quest)
+for quest_link in quest_links:
+    response = requests.get(quest_link)
+    soup = BeautifulSoup(response.text, 'lxml')
+    quests = soup.find_all('a', class_='category-page__member-link', href=True)
+    for quest in quests:
+        quests_list.append(quest)
 
 ids = ['appearance_id']
 years = ['appearance_year']
 types = ['appearance_type']
-names = ['appearance_names']
+names = ['appearance_name']
 locations = ['location_id']
+replicas_numbers = ['appearance_replicas_number']
 
 id = 1
 
 for quest in quests_list:
 
-    if append_one_elem(quest, id, ids, years, types, names, locations) is None:
+    if append_one_elem(quest, id, ids, years, types, names, locations, replicas_numbers) is None:
         id -= 1
     print(str(id) + '/' + str(len(quests_list)) + '\r', end='')
     id += 1
 
-np.savetxt('appearances.csv', [p for p in zip(ids, years, types, names, locations)], delimiter=',', fmt='%s')
+ids_connection = ['appearances_locations_id']
+appearances_ids_connection = ['appearance_id']
+locations_ids_connection = ['location_id']
+
+j = 0
+for i in range(1, len(ids)):
+    if locations[i] != '':
+        j += 1
+        ids_connection.append(j)
+        appearances_ids_connection.append(ids[i])
+        locations_ids_connection.append(locations[i])
+
+np.savetxt('appearances.csv', [p for p in zip(ids, years, types, names, replicas_numbers)], delimiter=',', fmt='%s')
+
+np.savetxt('appearances_locations.csv', [p for p in zip(ids_connection, appearances_ids_connection, locations_ids_connection)], delimiter=',', fmt='%s')

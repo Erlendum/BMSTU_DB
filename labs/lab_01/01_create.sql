@@ -5,8 +5,8 @@ CREATE SCHEMA witcher
 CREATE TABLE witcher.Quests
 (
 	quest_id INT PRIMARY KEY,
-	quest_name TEXT,
-	quest_type text,
+	quest_name text not null,
+	quest_type text not null,
 	quest_issuing text,
 	quest_reward TEXT
 );	
@@ -17,8 +17,8 @@ CREATE TABLE witcher.Locations
 	location_name TEXT,
 	location_type text,
 	location_place text,
-	quest_id INT,
-	FOREIGN KEY (quest_id) references witcher.Quests(quest_id) on delete cascade
+	location_square numeric
+	
 );
 
 CREATE TABLE witcher.Appearances
@@ -27,8 +27,7 @@ CREATE TABLE witcher.Appearances
 	appearance_year INT,
 	appearance_type text,
     appearance_name text,
-	location_id INT,
-	FOREIGN KEY (location_id) references witcher.Locations(location_id) on delete cascade
+    appearance_replicas_number int
 );
 
 CREATE TABLE witcher.Religions
@@ -51,7 +50,7 @@ CREATE TABLE witcher.Countries
     country_polity text,
     country_leaders text,
     country_language text,
-	religion_id INT,
+	religion_id INT not null,
 	FOREIGN KEY (religion_id) references witcher.Religions(religion_id) on delete cascade
 );
 
@@ -61,7 +60,7 @@ CREATE TABLE witcher.Species
 	species_name text,
 	species_types text,
     species_features text,
-    location_id INT,
+    location_id INT not null,
 	FOREIGN KEY (location_id) references witcher.Locations(location_id) on delete cascade
 );
 
@@ -72,11 +71,28 @@ CREATE TABLE witcher.Characters
     character_age int,
     character_occupation text,
     character_is_alive bool,
-	species_id int,
-	country_id int,
-	appearance_id int,
+	species_id int not null,
+	country_id int not null,
+	appearance_id int not null,
 	FOREIGN KEY (species_id) references witcher.Species(species_id) on delete cascade,
 	FOREIGN KEY (country_id) references witcher.Countries(country_id) on delete cascade,
 	FOREIGN KEY (appearance_id) references witcher.Appearances(appearance_id) on delete cascade
 );
+
+CREATE TABLE witcher.locations_quests (
+    locations_quests_id int PRIMARY KEY,
+    location_id int not null,
+    quest_id int not null,
+    FOREIGN KEY (location_id) references witcher.Locations(location_id) on delete cascade,
+    FOREIGN KEY (quest_id) references witcher.Quests(quest_id) on delete cascade
+);
+
+CREATE TABLE witcher.appearances_locations (
+    appearances_locations_id int primary key,
+    appearance_id int not null,
+    location_id int not null,
+    FOREIGN KEY (location_id) references witcher.Locations(location_id) on delete cascade,
+    FOREIGN KEY (appearance_id) references witcher.Appearances(appearance_id) on delete cascade
+);
+
 

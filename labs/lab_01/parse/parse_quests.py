@@ -5,8 +5,8 @@ import requests
 import numpy as np
 from bs4 import BeautifulSoup
 
-
 src = 'https://vedmak.fandom.com'
+
 
 def append_one_elem(quest, id, ids, names, types, issuings, rewards):
     url = src + quest['href']
@@ -60,52 +60,21 @@ def append_one_elem(quest, id, ids, names, types, issuings, rewards):
     if not reward_flag:
         rewards.append('')
 
-# src = 'https://vedmak.fandom.com'
-# url1 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9A%D0%B2%D0%B5%D1%81%D1%82%D1%8B"
-# response1 = requests.get(url1)
-# soup1 = BeautifulSoup(response1.text, 'lxml')
-#
-# url2 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9A%D0%B2%D0%B5%D1%81%D1%82%D1%8B?from=%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%3A+%D0%9B%D0%B5%D1%88%D0%B0%D1%87%D0%B8%D1%85%D0%B0"
-# response2 = requests.get(url2)
-# soup2 = BeautifulSoup(response2.text, 'lxml')
-#
-# url3 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9A%D0%B2%D0%B5%D1%81%D1%82%D1%8B?from=%D0%9D%D0%B0%D1%88%D0%BB%D0%B8%2C+%D0%B0+%D0%BD%D0%B5+%D1%83%D0%BA%D1%80%D0%B0%D0%BB%D0%B8"
-# response3 = requests.get(url3)
-# soup3 = BeautifulSoup(response3.text, 'lxml')
-#
-# url4 = src + "/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9A%D0%B2%D0%B5%D1%81%D1%82%D1%8B?from=%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA+%D0%B1%D0%BB%D1%83%D0%B4%D0%BD%D0%B8%D1%86"
-# response4 = requests.get(url4)
-# soup4 = BeautifulSoup(response4.text, 'lxml')
-#
-# quests1 = soup1.find_all('a', class_='category-page__member-link', href=True)
-# quests2 = soup2.find_all('a', class_='category-page__member-link', href=True)
-# quests3 = soup3.find_all('a', class_='category-page__member-link', href=True)
-# quests4 = soup4.find_all('a', class_='category-page__member-link', href=True)
 
-quest_links = []
+quests_list = []
 
 with open('quests_links.txt') as f:
     quest_links = f.readlines()
 
-
 for i in range(len(quest_links)):
     quest_links[i] = quest_links[i][:-1]
 
-print(quest_links)
-
-exit()
-quests_list = []
-for quest in quests1:
-    quests_list.append(quest)
-
-for quest in quests2:
-    quests_list.append(quest)
-
-for quest in quests3:
-    quests_list.append(quest)
-
-for quest in quests4:
-    quests_list.append(quest)
+for quest_link in quest_links:
+    response = requests.get(quest_link)
+    soup = BeautifulSoup(response.text, 'lxml')
+    quests = soup.find_all('a', class_='category-page__member-link', href=True)
+    for quest in quests:
+        quests_list.append(quest)
 
 ids = ['quest_id']
 names = ['quest_name']
@@ -126,6 +95,5 @@ for i in range(extra_n):
     append_one_elem(quest, id, ids, names, types, issuings, rewards)
     id += 1
     print('EXTRA ' + str(id) + '/' + str(extra_n + len(quests_list)) + '\r', end='')
-
 
 np.savetxt('quests.csv', [p for p in zip(ids, names, types, issuings, rewards)], delimiter=',', fmt='%s')

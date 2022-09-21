@@ -17,6 +17,13 @@ def get_religion_id_by_name(name):
         if name in el['religion_name']:
             return el['religion_id']
 
+def remove_square_brackets(s):
+    i = s.find('[')
+    while i != -1:
+        s = s[:i] + s[i+3:]
+        i = s.find('[')
+    return s
+
 def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polities, leaders, languages, religions):
     url = src + quest['href']
 
@@ -50,25 +57,30 @@ def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polit
     for j in range(len(soup_list) - 1):
         soup_list[j + 1] = soup_list[j + 1].replace(',', '')
         soup_list[j + 1] = soup_list[j + 1].replace(';', '')
-        if soup_list[j] == 'Столица':
+        soup_list[j + 1] = remove_square_brackets(soup_list[j+1])
+        if soup_list[j] == 'Столица' and not capital_flag:
             capital_flag = True
             capitals.append(soup_list[j + 1])
-        elif soup_list[j] == 'Статус':
+        elif soup_list[j] == 'Статус' and not status_flag:
             status_flag = True
             statuses.append(soup_list[j + 1])
-        elif soup_list[j] == 'Валюта' or soup_list[j] == 'Денежная единица':
+        elif soup_list[j] == 'Валюта' or soup_list[j] == 'Денежная единица' and not currency_flag:
             currency_flag = True
             currencies.append(soup_list[j + 1])
-        elif soup_list[j] == 'Форма правления':
+        elif soup_list[j] == 'Форма правления' and not polity_flag:
             polity_flag = True
             polities.append(soup_list[j + 1])
-        elif soup_list[j] == 'Правитель':
+        elif soup_list[j] == 'Правитель' and not leader_flag:
             leader_flag = True
             leaders.append(soup_list[j + 1])
-        elif soup_list[j] == 'Религия':
+        elif soup_list[j] == 'Религия' and not religion_flag:
             religion_flag = True
-            religions.append(get_religion_id_by_name(soup_list[j + 1][:8]))
-        elif soup_list[j] == 'Официальный язык':
+            religion = get_religion_id_by_name(soup_list[j + 1][:8])
+            if religion is None:
+                religion_flag = False
+                continue
+            religions.append(religion)
+        elif soup_list[j] == 'Официальный язык' and not language_flag:
             language_flag = True
             languages.append(soup_list[j + 1])
 
@@ -83,7 +95,7 @@ def append_one_elem(quest, id, ids, names, capitals, statuses, currencies, polit
     if not polity_flag:
         polities.append('')
     if not religion_flag:
-        religions.append('')
+        religions.append(10)
     if not language_flag:
         languages.append('')
 
