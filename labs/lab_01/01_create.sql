@@ -9,7 +9,7 @@ CREATE TABLE witcher.Quests
 	quest_type text,
 	quest_issuing text,
 	quest_reward TEXT
-);
+);	
 
 CREATE TABLE witcher.Locations
 (
