@@ -88,6 +88,251 @@ select appearance_id, appearance_year, appearance_type, appearance_name, appeara
 from witcher.appearances
 
 
+-- 11. Создание новой временной локальной таблицы из результирующего набора данных инструкции SELECT.
+-- Сформировать временную таблицу государств (id + название) с их религиями (название + лидеры).
+select ce.country_id, ce.country_name, ce.religion_name, ce.religion_leaders
+into temp countries_with_religions
+from (countries c
+	join witcher.religions r on c.religion_id = r.religion_id) as ce
+
+select * from countries_with_religions
+order by religion_leaders
+
+
+-- 12. Инструкция SELECT, использующая вложенные коррелированные подзапросы в качестве производных таблиц в предложении FROM.
+-- Вывести десять персонажей с самым большим количеством реплик и десять персонажей с самым маленьким количество реплик.
+select c.character_name, a.appearance_replicas_number
+from witcher.characters c join
+	(
+		select appearance_id, appearance_replicas_number
+		from witcher.appearances
+		order by appearance_replicas_number desc
+		limit 20
+	) a on c.appearance_id = a.appearance_id
+union
+select c.character_name, a.appearance_replicas_number
+from witcher.characters c join
+	(
+		select appearance_id, appearance_replicas_number
+		from witcher.appearances
+		order by appearance_replicas_number asc
+		limit 10
+	) a on c.appearance_id = a.appearance_id
+	
+	
+-- 13. Инструкция SELECT, использующая вложенные подзапросы с уровнем вложенности 3.
+-- Вывести имена персонажей, которые появлялись в локациях, где происходили второстепенные квесты.
+select character_name
+from witcher.characters
+where appearance_id  in
+(
+	select appearance_id 
+	from appearances_locations al
+	where al.location_id in
+	(
+		select location_id
+		from locations_quests lq
+		where lq.quest_id in
+		(
+			select quest_id
+			from quests
+			where quest_type = 'Второстепенный'
+		)	
+	)
+)
+
+
+-- 14. Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY, но без предложения HAVING.
+-- Для каждой религии вывести количество стран, которые её исповедуют.
+select r.religion_name, count_countries
+from witcher.religions r join
+(
+	select witcher.countries.religion_id, count(*) as count_countries
+	from witcher.countries
+	group by religion_id 
+) c on r.religion_id = c.religion_id
+
+
+-- 15.Инструкция SELECT, консолидирующая данные с помощью предложения GROUP BY и предложения HAVING.
+-- Вывести типы локаций, средняя площадь которых больше среднего значения средней площади всех локаций.
+select location_type, avg(location_square) 
+from witcher.locations
+group by location_type
+having avg(location_square) >
+	(
+		select avg(avg_locations_type_square)
+		from
+		(
+			select avg(location_square) as avg_locations_type_square
+			from witcher.locations
+			group by location_type
+		) as locations_type_square
+		
+	)
+
+
+-- 16. Однострочная инструкция INSERT, выполняющая вставку в таблицу одной строки значений.
+
+insert into witcher.appearances
+values
+	(2309, 1254, 'Книга', '«Меч Предназначения»', 80)
+	
+insert into witcher.characters
+values
+	('Катя', 'Женский', 20, 'Эскорт Золотого Дракона', true, 10, 7, 2309)
+	
+
+-- 17. Многострочная инструкция INSERT, выполняющая вставку в таблицу результирующего набора данных вложенного подзапроса.
+
+
+insert into witcher.appearances (appearance_id, appearance_year, appearance_type, appearance_name, appearance_replicas_number)
+select
+	(
+		select count(*) + 1
+		from witcher.appearances
+	),
+	
+	(
+		1230
+	),
+	
+	(
+		'Книга'
+	),
+	
+	(
+		'Ведьмак'
+	),
+	
+	(
+		select max(appearance_replicas_number)
+		from witcher.appearances
+		where appearance_name like '%жертвенности%'
+	)
+	
+
+-- 18. Простая инструкция UPDATE.
+update witcher.appearances
+set appearance_year = appearance_year + 1
+where appearance_id = 2309
+
+
+-- 19. Инструкция UPDATE со скалярным подзапросом в предложении SET.
+update witcher.appearances
+set appearance_replicas_number = 
+(
+	select
+	avg(appearance_replicas_number)
+	from witcher.appearances
+)
+where appearance_id = 2309
+
+
+-- 20. Простая инструкция DELETE.
+delete from witcher.appearances
+where appearance_id = 2310
+
+
+-- 21. Инструкция DELETE с вложенным коррелированным подзапросом в предложении WHERE.
+delete from witcher.characters c
+where c.appearance_id not in
+(
+	select appearance_id
+	from appearances a
+	where a.appearance_id in
+	(
+		select appearance_id
+		from appearances_locations 
+	)
+)
+
+
+-- 22. Инструкция SELECT, использующая простое обобщенное табличное выражение.
+-- Вывести для каждого рода деятельности персонажа среднее количество реплик.
+with occupation_stats (occupation_name, replicas_number) as
+(
+	select c.character_occupation, avg(a.appearance_replicas_number)
+	from witcher.characters c
+		join witcher.appearances a
+		on c.appearance_id = a.appearance_id 
+	group by c.character_occupation
+)
+select *
+from occupation_stats
+
+
+-- 23. Инструкция SELECT, использующая рекурсивное обобщенное табличное выражение.
+-- Вывести уровни персонажей по расе (самый высокий уровень -- дракон, самый низкий -- боболак).
+
+drop table if exists species_lvl;
+
+create table if not exists species_lvl
+(
+    id serial primary key,
+    id_on int,
+    species_id int
+
+);
+
+insert into species_lvl(id_on, species_id) values
+(2, 1),
+(3, 3),
+(4, 4),
+(5, 9),
+(6, 5),
+(7, 7),
+(8, 8),
+(9, 10),
+(10, 2),
+(11, 11),
+(12, 6)
+
+with recursive character_lvls (id, species_id, id_on) as
+(
+	select id, species_id, id_on
+	from witcher.species_lvl as sl
+	where sl.id = 1
+	union all
+	select sl.id, sl.species_id, sl.id_on
+	from witcher.species_lvl as sl
+		join character_lvls as rec on sl.id = rec.id_on
+)
+select c.character_name, c.species_id, cl.id as lvl
+from witcher.characters c
+	join character_lvls cl on c.species_id = cl.species_id
+	
+	
+-- 24. Оконные функции. Использование конструкций MIN/MAX/AVG OVER()
+-- Вывести локации и три характеристики типа локации (минимальная площадь, максимальная площадь, средняя площадь).
+select l.location_id, l.location_name, l.location_type, l.location_square,
+	min(location_square) over(partition by location_type) as min_square,
+	max(location_square) over(partition by location_type) as max_square,
+	avg(location_square) over(partition by location_type) as avg_square
+from locations l
+order by l.location_type
+
+
+-- 25. Оконные функции для устранения дублей.
+insert into witcher.characters
+values
+	('Ящер2', 'Мужской', 46, 'Кулачный боец', true, 8, 33, 2308)
+
+with duplications as
+(
+	select *, row_number() over (partition by character_sex, character_age, character_occupation, character_is_alive, country_id, appearance_id) as num
+	from witcher.characters
+)
+
+select count(*)
+from duplications
+where num = 1 and character_name = 'Ящер'
+
+select count(*)
+from witcher.characters
+
+
+
+
 
 
 
