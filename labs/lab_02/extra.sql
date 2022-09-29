@@ -38,12 +38,15 @@ from table1;
 
 select *
 from table2;
-
-select tb1.id,
-       var1,
-       var2,
-       (case when tb1.valid_from_dttm < tb2.valid_from_dttm then tb2.valid_from_dttm else tb1.valid_from_dttm end),
-       (case when tb1.valid_to_dttm < tb2.valid_to_dttm then tb1.valid_to_dttm else tb2.valid_to_dttm end)
-from table1 tb1
-         join table2 tb2 on tb1.valid_from_dttm < tb2.valid_to_dttm and
-                            tb1.valid_to_dttm > tb2.valid_from_dttm
+                                              
+WITH times AS (
+    SELECT DISTINCT t1.id, var1, var2, greatest(t1.valid_from_dttm, t2.valid_from_dttm) AS valid_from_dttm,
+    least(t1.valid_to_dttm, t2.valid_to_dttm) AS valid_to_dttm
+    FROM table1 t1
+    JOIN table2 t2
+    ON t1.id = t2.id
+)
+SELECT *
+FROM times
+WHERE valid_from_dttm <= valid_to_dttm
+ORDER BY valid_from_dttm
