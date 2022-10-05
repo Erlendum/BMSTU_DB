@@ -316,11 +316,11 @@ insert into species_lvl(id_on, species_id) values
 with recursive character_lvls (id, species_id, id_on) as
 (
 	select id, species_id, id_on
-	from witcher.species_lvl as sl
+	from species_lvl as sl
 	where sl.id = 1
 	union all
 	select sl.id, sl.species_id, sl.id_on
-	from witcher.species_lvl as sl
+	from species_lvl as sl
 		join character_lvls as rec on sl.id = rec.id_on
 )
 select c.character_name, c.species_id, cl.id as lvl
