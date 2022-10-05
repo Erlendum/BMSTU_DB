@@ -52,6 +52,25 @@ where character_occupation = 'Проститутка' and country_id in
 from witcher.countries
 where country_name = 'Цинтра')
 
+-- Защита.
+select *
+into temp spies
+from witcher.characters
+where character_occupation like '%Шпион%' and country_id in
+(select country_id
+from witcher.countries
+where country_name = 'Цинтра' or country_name = 'Ковир и Повис' or country_name = 'Редания'
+or country_name = 'Аэдирн' or country_name = 'Лирия и Ривия' or country_name = 'Тимерия'
+or country_name = 'Каэдвен')
+
+select *
+from spies
+union
+select *
+from spies
+where character_sex = 'Женский'
+--
+
 -- 8. Инструкция SELECT, использующая скалярные подзапросы в выражениях столбцов.
 -- Вывести максимальную и среднюю площадь для каждого типа локации.
 select distinct L.location_type,
@@ -107,7 +126,7 @@ from witcher.characters c join
 		select appearance_id, appearance_replicas_number
 		from witcher.appearances
 		order by appearance_replicas_number desc
-		limit 20
+		limit 10
 	) a on c.appearance_id = a.appearance_id
 union
 select c.character_name, a.appearance_replicas_number
@@ -149,7 +168,7 @@ from witcher.religions r join
 (
 	select witcher.countries.religion_id, count(*) as count_countries
 	from witcher.countries
-	group by religion_id 
+	group by religion_id
 ) c on r.religion_id = c.religion_id
 
 
@@ -172,6 +191,11 @@ having avg(location_square) >
 
 
 -- 16. Однострочная инструкция INSERT, выполняющая вставку в таблицу одной строки значений.
+delete from witcher.appearances
+where appearance_id = '2309'
+
+delete from witcher.characters
+where character_name = 'Катя'
 
 insert into witcher.appearances
 values
@@ -181,10 +205,12 @@ insert into witcher.characters
 values
 	('Катя', 'Женский', 20, 'Эскорт Золотого Дракона', true, 10, 7, 2309)
 	
+select *
+from witcher.characters
+where character_name = 'Катя'
+
 
 -- 17. Многострочная инструкция INSERT, выполняющая вставку в таблицу результирующего набора данных вложенного подзапроса.
-
-
 insert into witcher.appearances (appearance_id, appearance_year, appearance_type, appearance_name, appearance_replicas_number)
 select
 	(
@@ -230,10 +256,11 @@ where appearance_id = 2309
 
 -- 20. Простая инструкция DELETE.
 delete from witcher.appearances
-where appearance_id = 2310
+where appearance_id = 2309
 
 
 -- 21. Инструкция DELETE с вложенным коррелированным подзапросом в предложении WHERE.
+-- Удалить всех персонажей, которые не прикреплены к какой-либо локации (по сути, тех, кого не было в играх).
 delete from witcher.characters c
 where c.appearance_id not in
 (
@@ -263,7 +290,6 @@ from occupation_stats
 
 -- 23. Инструкция SELECT, использующая рекурсивное обобщенное табличное выражение.
 -- Вывести уровни персонажей по расе (самый высокий уровень -- дракон, самый низкий -- боболак).
-
 drop table if exists species_lvl;
 
 create table if not exists species_lvl
@@ -322,13 +348,9 @@ with duplications as
 	select *, row_number() over (partition by character_sex, character_age, character_occupation, character_is_alive, country_id, appearance_id) as num
 	from witcher.characters
 )
-
-select count(*)
+select *
 from duplications
-where num = 1 and character_name = 'Ящер'
-
-select count(*)
-from witcher.characters
+where num > 1
 
 
 
