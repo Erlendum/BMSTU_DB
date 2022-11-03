@@ -1,7 +1,7 @@
 -- 1.1) Скалярная функция.
 -- Возвращает среднюю площадь для типа локации, предающегося в качестве параметра.
-drop function avg_location_square(text) 
-create or replace function avg_location_square(loc_type text)
+drop function witcher.avg_location_square(text)
+create or replace function witcher.avg_location_square(loc_type text)
 returns int
 language plpgsql
 as $$
@@ -14,7 +14,7 @@ end
 $$
 
 select avg_location_square
-from avg_location_square('Замок')
+from avg_location_square('Банк')
 
 
 -- 1.2) Подставляемая табличная функция.
@@ -46,9 +46,9 @@ from appearance_by_name('Калантэ')
 
 -- 1.3) Многооператорная табличная функция.
 -- Возвращает квесты с выдающим и наградой, передающимися в качестве параметров.
-drop function quests_by_issuing_and_reward(text, text)
+drop function witcher.quests_by_issuing_and_reward(text, text)
 
-create or replace function quests_by_issuing_and_reward(issuing text, reward text)
+create or replace function witcher.quests_by_issuing_and_reward(issuing text, reward text)
 returns table
 (
 	quest_id int,
@@ -71,7 +71,7 @@ end
 $$
 
 select *
-from quests_by_issuing_and_reward('Йенифэр', '%крон%')
+from witcher.quests_by_issuing_and_reward('Йенифэр', '%крон%')
 
 
 -- 1.4) Функция с рекурсивным с рекурсивным ОТВ.
@@ -135,9 +135,9 @@ from characters_by_lvl(11)
 
 -- 2.1) Хранимая процедура с параметрами.
 -- Удаляет персонажа с именем, передающимся в качестве параметра.
-drop procedure delete_by_name(text)
+drop procedure witcher.delete_by_name(text)
 
-create or replace procedure delete_by_name(c_name text)
+create or replace procedure witcher.delete_by_name(c_name text)
 language plpgsql
 as $$
 begin
@@ -152,7 +152,6 @@ from witcher.characters
 where character_name = 'Сериал:Геральт'
 
 call delete_by_name('Сериал:Геральт')
-
 
 
 -- 2.2) Рекурсивная хранимая процедура.

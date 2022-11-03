@@ -186,7 +186,7 @@ select example -> 'creature' -> 'name', example -> 'info'
 from witcher.species
 
 -- 4.3 Выполнить проверку существования узла или атрибута.
-         drop function if exists is_key(text, json);
+drop function if exists is_key(text, json);
 
 create or replace function is_key(k text, j json)
     returns boolean
