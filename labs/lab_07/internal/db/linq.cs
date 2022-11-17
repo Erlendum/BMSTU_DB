@@ -136,7 +136,7 @@ namespace Linq
                         select c;
             var q = query.Select(c => { c["character_age"] = c["character_age"].ToObject<int>() + 10; return c; });
 
-            File.AppendAllText(@"../characters.json", "{ \"items\" : [\n");
+            File.WriteAllText(@"../characters.json", "{ \"items\" : [\n");
             foreach (var i in q)
             {
                 File.AppendAllText(@"../characters.json", i.ToString() + ",\n");
@@ -152,7 +152,7 @@ namespace Linq
                         in o["items"]
                         select c;
 
-            File.AppendAllText(@"../characters.json", "{ \"items\" : [\n");
+            File.WriteAllText(@"../characters.json", "{ \"items\" : [\n");
             foreach (var i in query)
             {
                 File.AppendAllText(@"../characters.json", i.ToString() + ",\n");
@@ -203,7 +203,7 @@ namespace Linq
                           in countries
                           on ca.country_id equals co.country_id
                           where ca.character_name == String.Format("{0}", character_name)
-                          select co.country_name
+                          select co.country_language
                          );
                 if (query.Count() == 0)
                     return "";
@@ -240,12 +240,15 @@ namespace Linq
         {
             using (data_access.PSQLContext db = new data_access.PSQLContext())
             {
-                var quest = db.quests.Find(quest_name);
-                if (quest != null)
-                {
-                    db.quests.Remove(quest);
-                    db.SaveChanges();
-                }
+                var quests = db.quests;
+                var query = from q
+                            in quests
+                            where q.quest_name == quest_name
+                            select q;
+                foreach (var i in query)
+                    db.quests.Remove(i);
+
+                db.SaveChanges();
             }
         }
 
