@@ -84,6 +84,16 @@ public class App
         Console.WriteLine("Операция успешно выполнена");
     }
 
+    public static void RemoveCharacterJSON()
+    {
+        Console.Write("\nВведите имя персонажа: ");
+        string? _character_name = Console.ReadLine();
+
+        
+        Linq.LinqToJson.RemoveCharacterJSON(_character_name);
+        Console.WriteLine("Операция успешно выполнена");
+    }
+
     public static void PrintCountQuestBYennefer()
     {
         Console.WriteLine("\nКоличество квестов, выданных Йеннифэр: " + Linq.LinqToSql.CountQuestBYennefer());

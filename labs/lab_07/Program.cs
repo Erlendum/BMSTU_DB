@@ -39,6 +39,10 @@ namespace lab_07
 					Console.ReadKey();
                 
 				}),
+				new MenuOptionWithAction("Удалить указанного персонажа JSON", () => { App.RemoveCharacterJSON();
+					Console.ReadKey();
+                
+				}),
                 new MenuOptionWithAction("Количество квестов, выданных Йеннифэр", () => { App.PrintCountQuestBYennefer();
 					Console.ReadKey();
                 

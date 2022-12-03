@@ -19,6 +19,7 @@ namespace Linq
                           select c
                          ).Count();
             }
+
             return result;
         }
 
@@ -166,6 +167,23 @@ namespace Linq
             string adding_character = JsonSerializer.Serialize(character, options);
 
             File.AppendAllText(@"../characters.json", adding_character + ",\n");
+            File.AppendAllText(@"../characters.json", "]\n}");
+        }
+
+        public static void RemoveCharacterJSON(string character_name)
+        {
+            JObject o = JObject.Parse(File.ReadAllText(@"../characters.json"));
+            List<data_access.Witcher.Character> result = new List<data_access.Witcher.Character>();
+            var query = from c
+                        in o["items"]
+                        where c["character_name"] != null && c["character_name"].ToString() != character_name
+                        select c;
+
+            File.WriteAllText(@"../characters.json", "{ \"items\" : [\n");
+            foreach (var i in query)
+            {
+                File.AppendAllText(@"../characters.json", i.ToString() + ",\n");
+            }
             File.AppendAllText(@"../characters.json", "]\n}");
         }
 
