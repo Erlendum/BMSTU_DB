@@ -25,6 +25,29 @@ begin
 end
 $$;
 
+create or replace procedure witcher.backup_schools()
+    language plpgsql
+as
+$$
+declare
+    t     text;
+    query text;
+begin
+    for t in
+        select table_name
+        from information_schema."tables"
+        where table_schema = 'witcher' and table_name = 'schools'
+        LOOP
+            query := 'copy (select row_to_json(r) from witcher.' || t ||
+                     ' as r) to ''/var/lib/postgresql/data/' || t ||
+                     '.json''';
+            raise notice '%', query;
+            execute query;
+        end loop;
+end
+$$;
+
+call backup_schools(); 
 call backup();
 
 -- 2. Выполнить загрузку и сохранение XML или JSON файла в таблицу.
@@ -220,6 +243,23 @@ with records as (select json_agg(example) as arr
                    from witcher.species)
 select json_array_elements(records.arr)
 from records
+
+
+
+create or replace procedure save_alive_witchers()
+language plpgsql
+as
+$$
+begin
+	copy (select row_to_json(c)
+    from witcher.characters as c
+    where character_is_alive = true and character_occupation like 'Ведьмак')
+    to '/var/lib/postgresql/data/alive_witchers.json';
+end
+$$;
+
+call save_alive_witchers();
+
 
 
 
