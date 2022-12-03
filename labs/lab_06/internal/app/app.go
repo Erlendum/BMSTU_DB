@@ -64,6 +64,10 @@ func New(dsn string) (*App, error) {
 			f:    a.InsertIntoWitcherSchoolsTable,
 		},
 		{
+			name: "Сохранить таблицу ведьмачьих школ",
+			f:    a.ExportSchoolsIntoJSON,
+		},
+		{
 			name: "Выход",
 			f: func() error {
 				os.Exit(0)

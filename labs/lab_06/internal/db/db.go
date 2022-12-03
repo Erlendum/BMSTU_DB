@@ -188,3 +188,8 @@ func (db *DB) InsertIntoWitcherSchoolsTable(s WitcherSchool) error {
 	_, err := db.db.Exec("insert into witcher.schools(school_id, school_name, school_leader, location_id) values ($1, $2, $3, $4)", s.SchoolId, s.SchoolName, s.SchoolLeader, s.LocationId)
 	return err
 }
+
+func (db *DB) ExportSchoolsIntoJSON() error {
+	_, err := db.db.Exec("call witcher.backup_schools()")
+	return err
+}

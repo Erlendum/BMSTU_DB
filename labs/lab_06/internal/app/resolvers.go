@@ -199,3 +199,14 @@ func (a *App) InsertIntoWitcherSchoolsTable() error {
 
 	return nil
 }
+
+func (a *App) ExportSchoolsIntoJSON() error {
+	err := a.database.ExportSchoolsIntoJSON()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("\nОперация успешно выполнена")
+
+	return nil
+}
