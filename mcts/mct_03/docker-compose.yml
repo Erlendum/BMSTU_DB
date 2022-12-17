@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres_db_rk_03
+    restart: always
+    build: ./
+    environment:
+      POSTGRES_DB: "RK3"
+      POSTGRES_USER: "erlendum"
+      POSTGRES_PASSWORD: "parasha"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - "5431:5432"
