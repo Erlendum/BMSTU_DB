@@ -50,3 +50,5 @@ SELECT *
 FROM times
 WHERE valid_from_dttm <= valid_to_dttm
 ORDER BY valid_from_dttm
+
+
