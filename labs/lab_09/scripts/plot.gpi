@@ -1,0 +1,19 @@
+#!/usr/bin/gnuplot -persist
+reset
+NO_ANIMATION = 1
+
+set terminal pdf
+set output "multipageplot.pdf"
+set size ratio 0.61803
+set size ratio 0.5625
+
+set fit prescale
+set xlabel "Реальное время, секунды"
+set ylabel "Время выполнения запроса, нс."
+set grid
+set title "Зависимость времени выполнения запроса от реального времени"
+
+FILES = system("ls -1 ./data/data_*.txt")
+LABEL = system("ls -1 ./data/data_*.txt | sed -e 's/data//' -e 's/data_//' -e 's/.txt//'")
+
+plot for [i=1:words(FILES)] word(FILES,i) with l title word(LABEL,i)
