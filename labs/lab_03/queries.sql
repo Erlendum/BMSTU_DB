@@ -179,6 +179,14 @@ $$
 call fibonacci(1, 4)
 
 
+with recursive factorial (n, factorial) AS (
+    select 1, 1 
+    union all
+    select n + 1, (n + 1) * factorial
+    from factorial 
+    where n < 5 
+)
+select n,factorial from factorial;
 
 -- 2.3) Хранимая процедура с курсором.
 -- Вывести локацию для каждого квеста.
