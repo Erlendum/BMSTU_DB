@@ -1,2 +1,2 @@
 # BMSTU_DB
-🚜 BMSTU IU7 (5 sem) DataBases
+:octocat: BMSTU IU7 (5 sem) DataBases (Theme: World of Witcher) 
